@@ -1,0 +1,62 @@
+@import 'tailwindcss';
+@import '@domhabersack/tokens/theme.css';
+@import '@domhabersack/tokens/motion.css';
+
+/* Type roles and elevation classes live in the tokens source. */
+@source '../../../../packages/tokens/src';
+
+@layer base {
+  /* Native controls and scrollbars follow the chosen theme too. */
+  :root {
+    color-scheme: light dark;
+  }
+  :root[data-theme='light'] {
+    color-scheme: light;
+  }
+  :root[data-theme='dark'] {
+    color-scheme: dark;
+  }
+  html {
+    @apply scroll-smooth bg-neutral-50 text-neutral-700 antialiased dark:bg-neutral-950 dark:text-neutral-300;
+    scroll-padding-top: 5rem;
+  }
+  ::selection {
+    @apply bg-brand-100 text-brand-900;
+  }
+}
+
+/*
+ * Looping demos for the motion rules. The name says when in the loop the
+ * element arrives, so one loop length can show different durations.
+ * With motion off, they run once and rest on the final frame.
+ */
+@keyframes demo-arrive-8 {
+  0% { opacity: 0; transform: var(--demo-from); }
+  8%, 100% { opacity: 1; transform: none; }
+}
+@keyframes demo-arrive-20 {
+  0% { opacity: 0; transform: var(--demo-from); }
+  20%, 100% { opacity: 1; transform: none; }
+}
+@keyframes demo-arrive-60 {
+  0% { opacity: 0; transform: var(--demo-from); }
+  60%, 100% { opacity: 1; transform: none; }
+}
+
+/* Long code lines scroll inside their block, never the page. */
+pre {
+  tab-size: 2;
+}
+
+/* Shown under the motion demos only while motion is off, when they rest on their last frame. */
+.motion-hint {
+  display: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  :root:not([data-motion='on']) .motion-hint {
+    display: block;
+  }
+}
+:root[data-motion='off'] .motion-hint {
+  display: block;
+}

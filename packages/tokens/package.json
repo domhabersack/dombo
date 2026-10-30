@@ -1,0 +1,40 @@
+{
+  "name": "@domhabersack/tokens",
+  "version": "0.1.0",
+  "description": "Design tokens for Dom Habersack's design system: a Tailwind CSS v4 theme, motion CSS, JSON values and a UnoCSS preset.",
+  "type": "module",
+  "license": "MIT",
+  "author": "Dom Habersack",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/domhabersack/dombo.git",
+    "directory": "packages/tokens"
+  },
+  "keywords": [
+    "design-tokens",
+    "tailwindcss",
+    "unocss",
+    "design-system"
+  ],
+  "exports": {
+    ".": "./dist/index.js",
+    "./theme.css": "./dist/theme.css",
+    "./motion.css": "./dist/motion.css",
+    "./tokens.json": "./dist/tokens.json",
+    "./uno": "./dist/uno.js"
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "scripts": {
+    "build": "node scripts/build.ts",
+    "prepack": "node scripts/build.ts"
+  },
+  "devDependencies": {
+    "tailwindcss": "^4.3.3"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

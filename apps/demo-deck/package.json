@@ -1,0 +1,16 @@
+{
+  "name": "demo-deck",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "slidev --open --remote",
+    "build": "slidev build --base /dombo/slides/ --out dist",
+    "export": "slidev export"
+  },
+  "devDependencies": {
+    "@slidev/cli": "^53.0.0"
+  },
+  "dependencies": {
+    "@domhabersack/slidev-theme-dombo": "^0.1.0"
+  }
+}

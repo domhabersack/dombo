@@ -1,0 +1,99 @@
+:root {
+  --slidev-theme-primary: theme('colors.brand.600');
+  --slidev-code-radius: 0.75rem;
+  --slidev-code-padding: 1rem 1.25rem;
+  --slidev-code-font-size: 0.8rem;
+  --slidev-code-line-height: 1.6;
+}
+html.dark {
+  --slidev-theme-primary: theme('colors.brand.400');
+}
+
+.slidev-layout {
+  @apply h-full px-16 py-14 text-neutral-700 dark:text-neutral-300;
+  font-feature-settings: 'cv11', 'ss01';
+  -webkit-font-smoothing: antialiased;
+}
+
+.slidev-layout h1 {
+  @apply text-5xl font-black leading-tight tracking-tight text-neutral-900 dark:text-white;
+  text-wrap: balance;
+}
+.slidev-layout h2 {
+  @apply text-3xl font-black leading-snug tracking-tight text-neutral-900 dark:text-white;
+}
+.slidev-layout h3 {
+  @apply text-xl font-black text-neutral-900 dark:text-white;
+}
+.slidev-layout h1 + p,
+.slidev-layout h2 + p {
+  @apply mt-4 text-xl leading-relaxed text-neutral-600 dark:text-neutral-400;
+}
+.slidev-layout p,
+.slidev-layout li {
+  @apply text-lg leading-relaxed;
+  text-wrap: pretty;
+}
+.slidev-layout p + p {
+  @apply mt-4;
+}
+.slidev-layout ul,
+.slidev-layout ol {
+  @apply mt-4 grid gap-2 pl-6;
+}
+.slidev-layout ul {
+  list-style: disc;
+}
+.slidev-layout ol {
+  list-style: decimal;
+}
+.slidev-layout li::marker {
+  @apply text-neutral-300 dark:text-neutral-600;
+}
+.slidev-layout a {
+  @apply font-medium text-neutral-900 underline decoration-neutral-300 underline-offset-4 dark:text-white dark:decoration-neutral-600;
+}
+.slidev-layout strong {
+  @apply font-semibold text-neutral-900 dark:text-white;
+}
+.slidev-layout blockquote {
+  @apply text-2xl font-medium text-neutral-900 dark:text-white;
+}
+.slidev-layout :not(pre) > code {
+  @apply rounded-md bg-neutral-100 px-1.5 py-0.5 text-[0.9em] text-neutral-900 dark:bg-white/10 dark:text-white;
+}
+.slidev-layout table {
+  @apply w-full text-left text-base;
+}
+.slidev-layout th {
+  @apply bg-neutral-100 px-3 py-2 font-semibold text-neutral-900 dark:bg-white/10 dark:text-white;
+}
+.slidev-layout th:first-child {
+  @apply rounded-l-lg;
+}
+.slidev-layout th:last-child {
+  @apply rounded-r-lg;
+}
+.slidev-layout td {
+  @apply px-3 py-2;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Section slides sit on neutral-900; only the number carries the brand color. */
+.slidev-layout.section h1,
+.slidev-layout.section h2 {
+  @apply text-white;
+}
+.slidev-layout.section p {
+  @apply text-neutral-400;
+}
+
+/* v-click: a short, small rise instead of a hard cut. */
+.slidev-vclick-target {
+  transition:
+    opacity var(--motion-duration-slow) var(--motion-ease-out),
+    transform var(--motion-duration-slow) var(--motion-ease-out);
+}
+.slidev-vclick-hidden {
+  transform: translateY(var(--motion-distance-sm));
+}

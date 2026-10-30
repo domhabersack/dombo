@@ -1,0 +1,37 @@
+/*
+ * Extra slide transitions that use the motion tokens. Set them per deck or
+ * per slide with `transition: rise` or `transition: soft-slide`. The motion.css
+ * guards turn them off when reduced motion is requested.
+ */
+.rise-enter-active,
+.rise-leave-active {
+  transition:
+    opacity var(--motion-duration-slow) var(--motion-ease-out),
+    transform var(--motion-duration-slow) var(--motion-ease-out);
+}
+.rise-leave-active {
+  transition-timing-function: var(--motion-ease-in);
+  transition-duration: var(--motion-duration-base);
+}
+.rise-enter-from {
+  opacity: 0;
+  transform: translateY(var(--motion-distance-lg));
+}
+.rise-leave-to {
+  opacity: 0;
+}
+
+.soft-slide-enter-active,
+.soft-slide-leave-active {
+  transition:
+    opacity var(--motion-duration-slow) var(--motion-ease-in-out),
+    transform var(--motion-duration-slow) var(--motion-ease-in-out);
+}
+.soft-slide-enter-from {
+  opacity: 0;
+  transform: translateX(var(--motion-distance-lg));
+}
+.soft-slide-leave-to {
+  opacity: 0;
+  transform: translateX(calc(var(--motion-distance-lg) * -1));
+}

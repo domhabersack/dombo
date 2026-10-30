@@ -1,0 +1,590 @@
+---
+import { Image } from 'astro:assets'
+import { getCollection, type CollectionEntry } from 'astro:content'
+import tokens from '@domhabersack/tokens/tokens.json'
+import Base from '../layouts/Base.astro'
+import Section from '../components/Section.astro'
+import Subheading from '../components/Subheading.astro'
+import RuleList from '../components/RuleList.astro'
+import ComponentDemo from '../components/ComponentDemo.astro'
+import { recipes } from '../data/components'
+import { ruleExamples } from '../data/rule-examples'
+import { icon, icons } from '../data/icons'
+
+const base = import.meta.env.BASE_URL.replace(/\/$/, '')
+
+const rules = (await getCollection('rules')).sort((a, b) => a.data.order - b.data.order)
+// Astro only logs YAML parse errors, so an invalid rules.yaml would otherwise ship an empty page.
+if (!rules.length) throw new Error('No rules loaded. Check content/rules.yaml for YAML errors.')
+const swipes = (await getCollection('swipes')).sort((a, b) => +b.data.captured - +a.data.captured)
+const changelog = (await getCollection('changelog')).sort((a, b) => +b.data.date - +a.data.date)
+
+// Backlinks: which swipes inspired which rule. Unknown rule ids fail the build.
+const ruleIds = new Set(rules.map((r) => r.id))
+const inspiredBy = new Map<string, CollectionEntry<'swipes'>[]>()
+for (const swipe of swipes) {
+  for (const { ruleId } of swipe.data.adopted) {
+    if (!ruleIds.has(ruleId)) throw new Error(`Swipe "${swipe.id}" adopts unknown rule "${ruleId}"`)
+    inspiredBy.set(ruleId, [...(inspiredBy.get(ruleId) ?? []), swipe])
+  }
+}
+// Visual examples must belong to a rule that has both a do and a don't to caption them.
+for (const id of Object.keys(ruleExamples)) {
+  const rule = rules.find((r) => r.id === id)
+  if (!rule?.data.do || !rule.data.dont) throw new Error(`Rule example "${id}" needs a rule with do and dont text`)
+}
+const ruleTitle = Object.fromEntries(rules.map((r) => [r.id, r.data.title]))
+const rulesIn = (category: CollectionEntry<'rules'>['data']['category']) =>
+  rules.filter((r) => r.data.category === category)
+
+const sections = [
+  ['principles', 'Principles'],
+  ['color', 'Color'],
+  ['typography', 'Typography'],
+  ['spacing', 'Spacing'],
+  ['depth', 'Radius & depth'],
+  ['motion', 'Motion'],
+  ['components', 'Components'],
+  ['channels', 'Channels'],
+  ['swipe-file', 'Swipe file'],
+  ['changelog', 'Changelog'],
+] as const
+
+const themeOptions = [
+  { value: 'auto', label: 'Match system theme', svg: icon(icons.computerDesktop, 'size-4') },
+  { value: 'light', label: 'Light theme', svg: icon(icons.sun, 'size-4') },
+  { value: 'dark', label: 'Dark theme', svg: icon(icons.moon, 'size-4') },
+] as const
+const arrowRight = icon(icons.arrowRight, 'size-4')
+
+const colorRoles = Object.entries(tokens.colors) as [string, Record<string, any>][]
+const shades = tokens.shades
+const version = changelog[0]?.id ?? '0.0.0'
+
+const typeSamples: Record<string, string> = {
+  display: 'Calm interfaces ship faster',
+  h1: 'A design system that grows with you',
+  h2: 'Collect, distill, adopt',
+  h3: 'Tokens before components',
+  lead: 'Start from swipe files, distill the properties worth keeping, and turn them into rules.',
+  body: 'Hierarchy comes from weight and color first. Size is the last tool you reach for, not the first. Most text on a screen should be quiet.',
+  small: 'Last updated 3 minutes ago by Dom',
+  caption: 'Figure 2: Elevation levels',
+  eyebrow: 'Design system',
+}
+
+const durations = Object.entries(tokens.motion.duration)
+const durationUse: Record<string, string> = {
+  instant: 'Color changes, toggles',
+  fast: 'Hover and press feedback',
+  base: 'Small UI changes, dropdowns',
+  slow: 'Panels and dialogs entering',
+  slower: 'Page and section reveals',
+}
+const easings = Object.entries(tokens.motion.ease)
+const easeUse: Record<string, string> = {
+  out: 'Things entering',
+  'in-out': 'State changes in place',
+  in: 'Things leaving',
+  spring: 'Small confirmations only',
+}
+const bezier = (value: string) => value.match(/[\d.]+/g)!.map(Number)
+
+const keyframeDemos = [
+  ['fade-in', 'animate-fade-in'],
+  ['fade-up', 'animate-fade-up'],
+  ['scale-in', 'animate-scale-in'],
+  ['slide-in-right', 'animate-slide-in-right'],
+] as const
+
+const socialFormats = [
+  { name: 'Square post', size: '1080 × 1080', w: 1080, h: 1080 },
+  { name: 'Portrait post', size: '1080 × 1350', w: 1080, h: 1350 },
+  { name: 'Link card / OG', size: '1200 × 630', w: 1200, h: 630 },
+]
+
+const brandHex = tokens.colors.brand['600'].hex
+const neutral = (shade: number) => tokens.colors.neutral[String(shade)].hex
+const emailSnippet = `<table role="presentation" width="600" cellpadding="0" cellspacing="0" style="margin:0 auto;background:#ffffff;border-radius:12px;font-family:${tokens.fonts.email.join(',').replace(/"/g, "'")};">
+  <tr><td style="padding:40px;">
+    <p style="margin:0;font-size:14px;line-height:24px;font-weight:600;color:${neutral(600)};">Newsletter issue 12</p>
+    <h1 style="margin:8px 0 0;font-size:28px;line-height:36px;font-weight:900;color:${neutral(900)};">Collect, distill, adopt</h1>
+    <p style="margin:16px 0 0;font-size:16px;line-height:28px;color:${neutral(600)};">This week: how a swipe file turns into design tokens.</p>
+    <a href="https://example.com" style="display:inline-block;margin-top:24px;padding:10px 16px;border-radius:6px;background:${brandHex};color:#ffffff;font-size:14px;font-weight:600;text-decoration:none;">Read the issue</a>
+  </td></tr>
+</table>`
+
+const install = `npm install @domhabersack/tokens
+
+/* app.css */
+@import "tailwindcss";
+@import "@domhabersack/tokens/theme.css";
+@import "@domhabersack/tokens/motion.css";`
+---
+
+<Base title="Dombo Design System" description="Dom Habersack's personal design system: rules, tokens, components and channel guides built on Tailwind CSS.">
+  <a href="#main" class="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-50 focus:rounded-md focus:bg-white focus:px-3 focus:py-2 focus:text-sm focus:font-semibold focus:text-neutral-900 focus:shadow-lg">Skip to content</a>
+
+  <header class="sticky top-0 z-40 bg-neutral-50/85 backdrop-blur dark:bg-neutral-950/85">
+    <div class="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
+      <a href="#top" class="flex items-center gap-2.5 text-sm font-semibold text-neutral-900 dark:text-white">
+        <img src={`${base}/favicon.svg`} alt="" class="size-7" />
+        dombo
+        <span class="rounded-md bg-neutral-200/70 px-2 py-0.5 text-xs font-medium text-neutral-700 dark:bg-white/10 dark:text-neutral-300">v{version}</span>
+      </a>
+      <div class="flex items-center gap-3">
+        <span id="theme-label" class="hidden text-xs font-medium text-neutral-500 sm:inline dark:text-neutral-400">Theme</span>
+        <div role="group" aria-labelledby="theme-label" class="flex rounded-lg bg-neutral-200/70 p-0.5 dark:bg-white/10">
+          {
+            themeOptions.map(({ value, label, svg }) => (
+              <button
+                type="button"
+                data-theme-option={value}
+                aria-pressed={value === 'auto' ? 'true' : 'false'}
+                aria-label={label}
+                title={label}
+                class="rounded-md px-2 py-1 text-neutral-600 transition duration-150 hover:text-neutral-900 aria-pressed:bg-white aria-pressed:text-neutral-900 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-brand-600 dark:text-neutral-400 dark:hover:text-white dark:aria-pressed:bg-neutral-800 dark:aria-pressed:text-white"
+              >
+                <Fragment set:html={svg} />
+              </button>
+            ))
+          }
+        </div>
+        <span id="motion-label" class="hidden text-xs font-medium text-neutral-500 sm:ml-2 sm:inline dark:text-neutral-400">Motion</span>
+        <div role="group" aria-labelledby="motion-label" class="flex rounded-lg bg-neutral-200/70 p-0.5 dark:bg-white/10">
+          {
+            (['auto', 'on', 'off'] as const).map((option) => (
+              <button
+                type="button"
+                data-motion-option={option}
+                aria-pressed={option === 'auto' ? 'true' : 'false'}
+                class="rounded-md px-2.5 py-1 text-xs font-medium text-neutral-600 capitalize transition duration-150 hover:text-neutral-900 aria-pressed:bg-white aria-pressed:text-neutral-900 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-brand-600 dark:text-neutral-400 dark:hover:text-white dark:aria-pressed:bg-neutral-800 dark:aria-pressed:text-white"
+              >
+                {option}
+              </button>
+            ))
+          }
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div id="top" class="mx-auto max-w-7xl px-4 sm:px-6 lg:grid lg:grid-cols-[13rem_minmax(0,1fr)] lg:gap-12 lg:px-8">
+    <nav aria-label="Sections" class="hidden lg:block">
+      <ol class="sticky top-24 grid gap-1 py-10 text-sm/6">
+        {
+          sections.map(([id, label]) => (
+            <li>
+              <a
+                href={`#${id}`}
+                data-nav-link
+                class="block rounded-md px-3 py-1 text-neutral-600 transition duration-150 hover:bg-neutral-100 hover:text-neutral-900 aria-current:bg-neutral-200/70 aria-current:font-medium aria-current:text-neutral-900 dark:text-neutral-400 dark:hover:bg-white/5 dark:hover:text-white dark:aria-current:bg-white/10 dark:aria-current:text-white"
+              >
+                {label}
+              </a>
+            </li>
+          ))
+        }
+      </ol>
+    </nav>
+
+    <main id="main" class="min-w-0">
+      <!-- Intro -->
+      <div class="pt-16 sm:pt-24">
+        <p class="animate-fade-up text-sm/6 font-semibold text-neutral-600 dark:text-neutral-400">Personal design system</p>
+        <h1 class="mt-2 max-w-3xl animate-fade-up text-4xl/tight font-black tracking-tight text-balance text-neutral-900 [animation-delay:80ms] sm:text-5xl/tight dark:text-white">
+          Every rule for how Dom’s products look, move and read.
+        </h1>
+        <p class="mt-6 max-w-prose animate-fade-up text-lg/8 text-pretty text-neutral-600 [animation-delay:160ms] dark:text-neutral-400">
+          Distilled from a swipe file of designs worth stealing from, and built on Tailwind CSS and the advice in Refactoring UI. One system covers websites, SaaS demos, slides, newsletters and social posts.
+        </p>
+        <div class="mt-8 max-w-2xl animate-fade-up overflow-hidden rounded-xl bg-neutral-900 [animation-delay:240ms]">
+          <div class="flex items-center justify-between bg-white/5 px-4 py-2">
+            <span class="text-xs font-medium text-neutral-400">Use it in a Tailwind v4 project</span>
+            <button type="button" data-copy={install} class="rounded px-2 py-1 text-xs font-medium text-neutral-300 transition duration-150 hover:bg-white/10 hover:text-white focus-visible:outline-2 focus-visible:outline-brand-400">
+              <span data-copy-label>Copy</span>
+            </button>
+          </div>
+          <pre class="overflow-x-auto p-4 text-xs/5 text-neutral-200"><code>{install}</code></pre>
+        </div>
+      </div>
+
+      <!-- 1. Principles -->
+      <Section id="principles" eyebrow="Foundations" title="Principles">
+        <Fragment slot="intro">
+          These are the rules every other rule follows, mostly adapted from <a class="font-medium text-neutral-900 underline decoration-neutral-300 underline-offset-2 hover:decoration-neutral-900 dark:text-white dark:decoration-neutral-600 dark:hover:decoration-white" href="https://www.refactoringui.com">Refactoring UI</a>. If a decision isn't covered further down, these decide it.
+        </Fragment>
+        <RuleList rules={rulesIn('principle')} {inspiredBy} />
+      </Section>
+
+      <!-- 2. Color -->
+      <Section id="color" eyebrow="Foundations" title="Color">
+        <Fragment slot="intro">
+          Every color is a stock Tailwind palette shade under a semantic name. Use <code class="text-sm font-medium text-neutral-900 dark:text-white">bg-brand-600</code>, not <code class="text-sm">bg-fuchsia-600</code>, so the brand can be re-pointed in one place. Click a swatch to copy its class.
+        </Fragment>
+        <div class="grid gap-6">
+          {
+            colorRoles.map(([role, scale]) => (
+              <div data-animate="fade-up">
+                <div class="flex items-baseline gap-2">
+                  <h3 class="text-sm/6 font-black text-neutral-900 capitalize dark:text-white">{role}</h3>
+                  <span class="text-xs text-neutral-500 dark:text-neutral-400">uses Tailwind’s {scale.tailwind}</span>
+                </div>
+                <ol class="mt-2 grid grid-cols-6 gap-x-2 gap-y-3 sm:grid-cols-11">
+                  {shades.map((shade) => (
+                    <li>
+                      <button
+                        type="button"
+                        data-copy={`${role}-${shade}`}
+                        title={`Copy ${role}-${shade}`}
+                        class="group w-full text-left focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
+                      >
+                        <span
+                          class="block h-10 w-full rounded-md ring-1 ring-neutral-900/10 ring-inset transition duration-150 ease-out group-hover:scale-105 dark:ring-white/10"
+                          style={`background:${scale[shade].hex}`}
+                        />
+                        <span class="mt-1 block text-xs font-medium text-neutral-900 dark:text-white" data-copy-label>{shade}</span>
+                        <span class="block font-mono text-[10px] text-neutral-500 uppercase dark:text-neutral-400">{scale[shade].hex}</span>
+                      </button>
+                    </li>
+                  ))}
+                </ol>
+              </div>
+            ))
+          }
+        </div>
+        <RuleList rules={rulesIn('color')} {inspiredBy} />
+      </Section>
+
+      <!-- 3. Typography -->
+      <Section id="typography" eyebrow="Foundations" title="Typography">
+        <Fragment slot="intro">
+          One family, <strong class="font-semibold text-neutral-900 dark:text-white">Inter Variable</strong>, with JetBrains Mono for code, both self-hosted. Headings are always black. Pick a role rather than a size, because each role sets size, line height, weight and color together.
+        </Fragment>
+        <div class="grid gap-2">
+          {
+            Object.entries(tokens.typeRoles).map(([role, classes]) => (
+              <div data-animate="fade-up" class="grid gap-2 rounded-xl bg-white p-5 sm:grid-cols-[10rem_minmax(0,1fr)] sm:gap-6 dark:bg-neutral-900">
+                <div>
+                  <p class="text-sm font-semibold text-neutral-900 dark:text-white">{role}</p>
+                  <button type="button" data-copy={classes} class="mt-1 text-left font-mono text-[11px]/4 break-words text-neutral-500 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white">
+                    <span data-copy-label>{classes}</span>
+                  </button>
+                </div>
+                <p class={classes}>{typeSamples[role]}</p>
+              </div>
+            ))
+          }
+        </div>
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div data-animate="fade-up" class="flex flex-col gap-1 rounded-xl bg-white p-5 dark:bg-neutral-900">
+            <p class="text-xs font-medium text-neutral-500 dark:text-neutral-400">font-sans uses Inter Variable</p>
+            <p class="mt-1 font-sans text-3xl font-normal text-neutral-900 dark:text-white">Aa <span class="font-medium">Aa</span> <span class="font-semibold">Aa</span> <span class="font-black">Aa</span></p>
+            <p class="text-xs text-neutral-500 dark:text-neutral-400">Regular, medium, semibold and black</p>
+          </div>
+          <div data-animate="fade-up" class="flex flex-col gap-1 rounded-xl bg-white p-5 dark:bg-neutral-900">
+            <p class="text-xs font-medium text-neutral-500 dark:text-neutral-400">font-mono uses JetBrains Mono Variable</p>
+            <p class="mt-1 font-mono text-2xl text-neutral-900 dark:text-white">{'const x = 42'}</p>
+            <p class="text-xs text-neutral-500 dark:text-neutral-400">Code only</p>
+          </div>
+        </div>
+        <RuleList rules={rulesIn('type')} {inspiredBy} />
+      </Section>
+
+      <!-- 4. Spacing -->
+      <Section id="spacing" eyebrow="Foundations" title="Spacing">
+        <Fragment slot="intro">
+          These are the Tailwind spacing steps the system uses, and the rest are off-limits. Neighboring steps are far enough apart that picking one is never a coin toss.
+        </Fragment>
+        <ol class="grid gap-2">
+          {
+            tokens.spacing.map((step) => (
+              <li data-animate="fade-up" class="grid grid-cols-[4rem_4rem_minmax(0,1fr)] items-center gap-3 text-sm/6">
+                <code class="font-mono text-xs text-neutral-900 dark:text-white">{step}</code>
+                <span class="text-xs text-neutral-500 tabular-nums dark:text-neutral-400">{step * 4}px</span>
+                <span class="block h-4 rounded-sm bg-neutral-300 dark:bg-neutral-700" style={`width:min(100%, ${step * 0.25}rem)`} />
+              </li>
+            ))
+          }
+        </ol>
+        <RuleList rules={rulesIn('spacing')} {inspiredBy} />
+      </Section>
+
+      <!-- 5. Depth -->
+      <Section id="depth" eyebrow="Foundations" title="Radius & depth">
+        <Fragment slot="intro">
+          Depth comes from background lightness. The page is neutral-50, surfaces are white and wells are neutral-100. Only things that float above the page, like menus and dialogs, get a shadow.
+        </Fragment>
+        <div class="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
+          {
+            Object.entries(tokens.elevation).map(([level, classes]) => (
+              <div
+                data-animate="scale-in"
+                class:list={[
+                  'flex aspect-4/3 flex-col justify-end gap-1 rounded-xl p-4',
+                  classes,
+                  // The page level matches this page, so outline it to show its bounds.
+                  level === 'page' && 'outline-1 -outline-offset-1 outline-neutral-300 outline-dashed dark:outline-white/20',
+                ]}
+              >
+                <p class="text-sm font-semibold text-neutral-900 capitalize dark:text-white">{level}</p>
+                <p class="font-mono text-[11px]/4 text-neutral-500 dark:text-neutral-400">{classes}</p>
+              </div>
+            ))
+          }
+        </div>
+        <div class="grid grid-cols-3 gap-4 sm:grid-cols-5">
+          {
+            Object.entries(tokens.radius).map(([use, cls]) => (
+              <div data-animate="scale-in" class="flex flex-col items-center gap-1 text-center">
+                <div class={`mb-1 aspect-square w-full max-w-28 bg-neutral-200 dark:bg-neutral-800 ${cls}`} />
+                <p class="text-sm font-semibold text-neutral-900 capitalize dark:text-white">{use}</p>
+                <p class="font-mono text-xs text-neutral-500 dark:text-neutral-400">{cls}</p>
+              </div>
+            ))
+          }
+        </div>
+        <RuleList rules={rulesIn('depth')} {inspiredBy} />
+      </Section>
+
+      <!-- 6. Motion -->
+      <Section id="motion" eyebrow="Foundations" title="Motion">
+        <Fragment slot="intro">
+          Motion should be lively, subtle and always optional. Use the switch in the header to turn it on or off for this page. On Auto it follows your OS reduced-motion setting. Every demo below still works as a static page.
+        </Fragment>
+        <div class="flex flex-col gap-4">
+          <Subheading title="Durations" />
+          <div class="overflow-hidden rounded-xl bg-white dark:bg-neutral-900">
+            <table class="w-full text-left text-sm/6">
+              <thead class="bg-neutral-100 text-xs font-semibold text-neutral-900 dark:bg-neutral-800/60 dark:text-white">
+                <tr><th class="px-4 py-2">Token</th><th class="px-4 py-2">Value</th><th class="hidden px-4 py-2 sm:table-cell">Use for</th></tr>
+              </thead>
+              <tbody>
+                {
+                  durations.map(([name, ms]) => (
+                    <tr>
+                      <td class="px-4 py-2.5 font-mono text-xs text-neutral-900 dark:text-white">--motion-duration-{name}</td>
+                      <td class="px-4 py-2.5 tabular-nums">{ms}ms</td>
+                      <td class="hidden px-4 py-2.5 text-neutral-600 sm:table-cell dark:text-neutral-400">{durationUse[name]}</td>
+                    </tr>
+                  ))
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="flex flex-col gap-4">
+          <div class="flex flex-col gap-1">
+            <Subheading title="Easing" />
+            <p class="text-sm/6 text-neutral-600 dark:text-neutral-400">Select a curve to play it. In Tailwind, use them as <code class="font-mono text-xs">ease-out</code>, <code class="font-mono text-xs">ease-in-out</code>, <code class="font-mono text-xs">ease-in</code> and <code class="font-mono text-xs">ease-spring</code>.</p>
+          </div>
+          <div class="grid gap-4 sm:grid-cols-2">
+            {
+              easings.map(([name, value]) => {
+                const [x1, y1, x2, y2] = bezier(value)
+                return (
+                  <button
+                    type="button"
+                    data-ease-demo
+                    class="group grid grid-cols-[4.5rem_minmax(0,1fr)] items-center gap-4 rounded-xl bg-white p-4 text-left transition-colors duration-150 hover:bg-neutral-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600 dark:bg-neutral-900 dark:hover:bg-neutral-800"
+                  >
+                    <svg viewBox="-0.1 -0.4 1.2 1.8" class="size-18 text-neutral-900 dark:text-white" aria-hidden="true">
+                      <rect x="0" y="0" width="1" height="1" fill="none" class="stroke-neutral-200 dark:stroke-white/10" stroke-width="0.02" transform="translate(0 0.2)" />
+                      <path d={`M0 1.2 C ${x1} ${1.2 - y1}, ${x2} ${1.2 - y2}, 1 0.2`} fill="none" stroke="currentColor" stroke-width="0.05" stroke-linecap="round" />
+                    </svg>
+                    <span class="flex min-w-0 flex-col">
+                      <span class="font-mono text-sm font-semibold text-neutral-900 dark:text-white">ease-{name}</span>
+                      <span class="text-xs text-neutral-500 dark:text-neutral-400">{easeUse[name]}</span>
+                      <span class="relative mt-3 h-6 rounded-full bg-neutral-100 dark:bg-white/10">
+                        <span
+                          class="absolute top-1 left-1 size-4 rounded-full bg-neutral-900 transition-[left] duration-700 group-data-on:left-[calc(100%-1.25rem)] dark:bg-white"
+                          style={`transition-timing-function:${value}`}
+                        />
+                      </span>
+                    </span>
+                  </button>
+                )
+              })
+            }
+          </div>
+        </div>
+        <div class="flex flex-col gap-4">
+          <div class="flex flex-col gap-1">
+            <Subheading title="Entrances" />
+            <p class="text-sm/6 text-neutral-600 dark:text-neutral-400">These are Tailwind utilities from the token theme. Elements with <code class="font-mono text-xs">data-animate="fade-up"</code> also reveal on scroll, like the sections on this page.</p>
+          </div>
+          <div class="grid grid-cols-2 gap-4 sm:grid-cols-4">
+            {
+              keyframeDemos.map(([name, cls]) => (
+                <div class="flex flex-col gap-3 rounded-xl bg-white p-4 dark:bg-neutral-900">
+                  <div id={`kf-${name}`} data-animation={cls} class={`flex h-20 items-center justify-center rounded-lg bg-neutral-100 text-xs font-medium text-neutral-900 dark:bg-neutral-800 dark:text-white ${cls}`}>
+                    {name}
+                  </div>
+                  <button type="button" data-replay={`kf-${name}`} class="flex w-full items-center justify-center gap-1.5 rounded-md px-2 py-1 font-mono text-xs text-neutral-600 transition-colors duration-150 hover:bg-neutral-100 hover:text-neutral-900 focus-visible:outline-2 focus-visible:outline-brand-600 dark:text-neutral-400 dark:hover:bg-white/10 dark:hover:text-white">
+                    <Fragment set:html={icon(icons.arrowPath, 'size-3.5 shrink-0')} />
+                    {cls}
+                  </button>
+                </div>
+              ))
+            }
+          </div>
+        </div>
+        <RuleList rules={rulesIn('motion')} {inspiredBy} />
+      </Section>
+
+      <!-- 7. Components -->
+      <Section id="components" eyebrow="Building blocks" title="Components">
+        <Fragment slot="intro">
+          These recipes are written in the style of Tailwind UI: plain HTML with utility classes, so they paste into Astro, React, Vue or a template. Each preview is rendered from the same markup you copy.
+        </Fragment>
+        {recipes.map((recipe) => <ComponentDemo recipe={recipe} />)}
+        <RuleList rules={rulesIn('component')} {inspiredBy} />
+      </Section>
+
+      <!-- 8. Channels -->
+      <Section id="channels" eyebrow="Style guides" title="Channels">
+        <Fragment slot="intro">
+          The same tokens work on every surface, and each channel has its own constraints. Here's how the system adapts to each one.
+        </Fragment>
+        <div class="grid gap-4 md:grid-cols-2">
+          <article data-animate="fade-up" class="flex flex-col gap-3 rounded-xl bg-white p-6 dark:bg-neutral-900">
+            <h3 class="text-base/7 font-black text-neutral-900 dark:text-white">Websites</h3>
+            <ul class="grid gap-2 text-sm/6 text-neutral-600 dark:text-neutral-400">
+              <li>Import <code class="font-mono text-xs">theme.css</code> and <code class="font-mono text-xs">motion.css</code> after <code class="font-mono text-xs">tailwindcss</code>.</li>
+              <li>Content width is <code class="font-mono text-xs">max-w-7xl</code> with <code class="font-mono text-xs">px-4 sm:px-6 lg:px-8</code>, and prose is <code class="font-mono text-xs">max-w-prose</code>.</li>
+              <li>Section rhythm: <code class="font-mono text-xs">py-16 sm:py-24</code>.</li>
+              <li>Reveal on scroll with <code class="font-mono text-xs">data-animate</code>, and add <code class="font-mono text-xs">data-reveal</code> to <code class="font-mono text-xs">&lt;html&gt;</code> from JS.</li>
+            </ul>
+          </article>
+          <article data-animate="fade-up" class="flex flex-col gap-3 rounded-xl bg-white p-6 dark:bg-neutral-900">
+            <h3 class="text-base/7 font-black text-neutral-900 dark:text-white">SaaS demos</h3>
+            <ul class="grid gap-2 text-sm/6 text-neutral-600 dark:text-neutral-400">
+              <li>Put the app on a <code class="font-mono text-xs">bg-neutral-50</code> page, with content on white surfaces and no shadows.</li>
+              <li>Data is <code class="font-mono text-xs">tabular-nums</code>, and status always uses badges, never colored text alone.</li>
+              <li>Use realistic, specific demo data. No "Lorem ipsum" and no "John Doe".</li>
+              <li>Screenshots for slides go in the Slidev theme's <code class="font-mono text-xs">demo</code> layout.</li>
+            </ul>
+          </article>
+          <article data-animate="fade-up" class="flex flex-col gap-3 rounded-xl bg-white p-6 dark:bg-neutral-900">
+            <h3 class="text-base/7 font-black text-neutral-900 dark:text-white">Presentations</h3>
+            <ul class="grid gap-2 text-sm/6 text-neutral-600 dark:text-neutral-400">
+              <li>Install <code class="font-mono text-xs">@domhabersack/slidev-theme-dombo</code> and set <code class="font-mono text-xs">theme: '@domhabersack/slidev-theme-dombo'</code>.</li>
+              <li>Layouts: cover, section, default, two-cols, image-left/right, statement, quote, fact, demo, end.</li>
+              <li>Components: <code class="font-mono text-xs">&lt;Callout&gt;</code>, <code class="font-mono text-xs">&lt;Stat&gt;</code>, <code class="font-mono text-xs">&lt;Badge&gt;</code>, <code class="font-mono text-xs">&lt;BrowserFrame&gt;</code>.</li>
+            </ul>
+            <a href={`${base}/slides/`} class="mt-1 inline-flex items-center gap-1 text-sm/6 font-semibold text-neutral-900 hover:text-neutral-600 dark:text-white dark:hover:text-neutral-300">See the demo deck <Fragment set:html={arrowRight} /></a>
+          </article>
+          <article data-animate="fade-up" class="flex flex-col gap-3 rounded-xl bg-white p-6 dark:bg-neutral-900">
+            <h3 class="text-base/7 font-black text-neutral-900 dark:text-white">Social posts</h3>
+            <div class="mt-1 flex items-end gap-3">
+              {
+                socialFormats.map((f) => (
+                  <div class="min-w-0 flex-1 text-center">
+                    <div class="relative mx-auto w-full rounded-md bg-brand-600 p-[6%]" style={`aspect-ratio:${f.w}/${f.h}`}>
+                      <div class="h-full rounded-sm border border-dashed border-white/50" />
+                    </div>
+                    <p class="mt-2 text-xs font-medium text-neutral-900 dark:text-white">{f.name}</p>
+                    <p class="text-[11px] text-neutral-500 tabular-nums dark:text-neutral-400">{f.size}</p>
+                  </div>
+                ))
+              }
+            </div>
+            <p class="text-sm/6 text-neutral-600 dark:text-neutral-400">Keep a 64px safe area (dashed), headlines at 64px or larger, and one brand element per image. Use hex values from <code class="font-mono text-xs">tokens.json</code> in image tools.</p>
+          </article>
+        </div>
+        <div data-animate="fade-up" class="flex flex-col gap-2 rounded-xl bg-white p-2 dark:bg-neutral-900">
+          <div class="flex flex-wrap items-start justify-between gap-4 px-3 pt-2">
+            <div class="flex max-w-prose flex-col gap-1">
+              <h3 class="text-base/7 font-black text-neutral-900 dark:text-white">Email newsletters</h3>
+              <p class="text-sm/6 text-neutral-600 dark:text-neutral-400">Email clients ignore classes and CSS variables, so styles are inlined with hex values from <code class="font-mono text-xs">@domhabersack/tokens/tokens.json</code>. Use a single 600px table column and system fonts.</p>
+            </div>
+            <button type="button" data-copy={emailSnippet} class="rounded-lg px-2.5 py-1.5 text-xs font-semibold text-neutral-600 transition-colors duration-150 hover:bg-neutral-100 hover:text-neutral-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600 dark:text-neutral-400 dark:hover:bg-white/10 dark:hover:text-white">
+              <span data-copy-label>Copy HTML</span>
+            </button>
+          </div>
+          <div class="overflow-x-auto rounded-sm bg-neutral-100 p-6 sm:p-10 dark:bg-neutral-800/60">
+            <div class="mx-auto w-full max-w-[600px] [&_table]:w-full" set:html={emailSnippet} />
+          </div>
+        </div>
+        <RuleList rules={rulesIn('channel')} {inspiredBy} />
+      </Section>
+
+      <!-- 9. Swipe file -->
+      <Section id="swipe-file" eyebrow="Sources" title="Swipe file">
+        <Fragment slot="intro">
+          These are designs worth learning from, including Dom’s own projects. Each entry lists the properties that were adopted and links to the rules they became. To add one, run <code class="font-mono text-sm text-neutral-900 dark:text-white">npm run new:swipe my-find</code> and drop a screenshot into its folder.
+        </Fragment>
+        <ul class="grid gap-6 md:grid-cols-2">
+          {
+            swipes.map((swipe) => (
+              <li id={`swipe-${swipe.id}`} data-animate="fade-up" class="scroll-mt-24 overflow-hidden rounded-xl bg-white target:ring-2 target:ring-neutral-300 dark:target:ring-neutral-700 dark:bg-neutral-900">
+                {swipe.data.cover && (
+                  <Image src={swipe.data.cover} alt={`${swipe.data.title} (${swipe.data.author})`} width={800} class="aspect-8/5 w-full bg-neutral-100 object-cover" />
+                )}
+                <div class="flex flex-col gap-3 p-5">
+                  <div class="flex flex-wrap items-center gap-2">
+                    {swipe.data.example && <span class="rounded-md bg-warning-100 px-2 py-0.5 text-xs font-medium text-warning-800 dark:bg-warning-500/15 dark:text-warning-300">Example</span>}
+                    {swipe.data.tags.map((tag) => (
+                      <span class="rounded-md bg-neutral-100 px-2 py-0.5 text-xs font-medium text-neutral-700 dark:bg-white/10 dark:text-neutral-300">{tag}</span>
+                    ))}
+                  </div>
+                  <div class="flex flex-col">
+                    <h3 class="text-base/7 font-black text-neutral-900 dark:text-white">{swipe.data.title}</h3>
+                    <p class="text-sm/6 text-neutral-500 dark:text-neutral-400">
+                      By{' '}
+                      {swipe.data.source ? (
+                        <a href={swipe.data.source} class="font-medium text-neutral-900 underline decoration-neutral-300 underline-offset-2 hover:decoration-neutral-900 dark:text-white dark:decoration-neutral-600 dark:hover:decoration-white" rel="noopener">{swipe.data.author}</a>
+                      ) : (
+                        <span class="font-medium text-neutral-700 dark:text-neutral-300">{swipe.data.author}</span>
+                      )}
+                      , captured on <time datetime={swipe.data.captured.toISOString()}>{swipe.data.captured.toLocaleDateString('en', { year: 'numeric', month: 'long', day: 'numeric' })}</time>
+                    </p>
+                  </div>
+                  <h4 class="mt-1 text-xs font-black text-neutral-900 dark:text-white">Adopted</h4>
+                  <ul class="grid gap-3 text-sm/6">
+                    {swipe.data.adopted.map((a) => (
+                      <li class="flex flex-col gap-0.5 text-neutral-700 dark:text-neutral-300">
+                        {a.property}
+                        <a href={`#rule-${a.ruleId}`} class="flex items-center gap-1 text-xs font-medium text-neutral-700 hover:text-neutral-900 dark:text-neutral-300 dark:hover:text-white"><Fragment set:html={icon(icons.arrowRight, 'size-3.5 shrink-0')} />{ruleTitle[a.ruleId]}</a>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </li>
+            ))
+          }
+        </ul>
+      </Section>
+
+      <!-- 10. Changelog -->
+      <Section id="changelog" eyebrow="History" title="Changelog">
+        <Fragment slot="intro">How the system has evolved.</Fragment>
+        <ol class="grid gap-8">
+          {
+            changelog.map((entry) => (
+              <li data-animate="fade-up" class="grid gap-2 sm:grid-cols-[8rem_minmax(0,1fr)] sm:gap-6">
+                <div>
+                  <h3 class="text-sm font-black text-neutral-900 dark:text-white">Version {entry.id}</h3>
+                  <time class="text-xs text-neutral-500 dark:text-neutral-400" datetime={entry.data.date.toISOString()}>{entry.data.date.toISOString().slice(0, 10)}</time>
+                </div>
+                <ul class="grid list-disc gap-1 pl-5 text-sm/6 text-neutral-600 marker:text-neutral-300 dark:text-neutral-400">
+                  {entry.data.notes.map((note) => <li>{note}</li>)}
+                </ul>
+              </li>
+            ))
+          }
+        </ol>
+      </Section>
+
+      <footer class="py-10 text-sm/6 text-neutral-500 dark:text-neutral-400">
+        Built with Astro and Tailwind CSS. The tokens ship as <code class="font-mono text-xs">@domhabersack/tokens</code> and the slides as <code class="font-mono text-xs">@domhabersack/slidev-theme-dombo</code>.
+      </footer>
+    </main>
+  </div>
+</Base>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-ease-demo]').forEach((button) => {
+    button.addEventListener('click', () => button.toggleAttribute('data-on'))
+  })
+</script>

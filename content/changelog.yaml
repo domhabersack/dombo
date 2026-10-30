@@ -1,0 +1,9 @@
+# Keyed by version, newest first.
+0.1.0:
+  date: 2026-10-29
+  notes:
+    - First version, with Tailwind-based tokens. The brand is fuchsia, neutrals are zinc, and Inter Variable and JetBrains Mono are self-hosted.
+    - 34 rules adapted from Refactoring UI and from Dom’s own apps (codeshots, codereels and planama).
+    - A flat look, where elevation comes from background shifts instead of shadows and space separates content instead of lines. Headings are black.
+    - Light and dark mode through a switchable dark variant.
+    - Components in the style of Tailwind UI, the Slidev theme and the swipe file format.

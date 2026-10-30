@@ -1,0 +1,279 @@
+# Every rule of the design system, one entry each.
+#
+# category: principle | color | type | spacing | depth | motion | component | channel
+# status:   adopted (use it) | trial (trying it out) | proposed (considering it)
+#
+# Swipe entries link here through `adopted[].ruleId`; the site shows those
+# links as "Inspired by" on each rule.
+
+- id: hierarchy-not-size
+  category: principle
+  title: Build hierarchy with weight and color before size
+  rule: Make secondary text smaller only as a last resort. De-emphasize it with a lighter color or weight first, and emphasize primary content with semibold, not bigger type.
+  do: Keep the size the same and set the name apart with weight, the details with a lighter color.
+  dont: Don’t give every line its own font size. Nothing looks more important than anything else.
+  status: adopted
+
+- id: start-with-too-much-space
+  category: principle
+  title: Start with too much white space, then remove it
+  rule: Begin layouts generously and tighten them until they feel right. Dense UIs are a deliberate choice, not the default.
+  do: Give content generous padding so it has room to breathe.
+  dont: Don’t squeeze content against the edges of its container.
+  status: adopted
+
+- id: design-in-grayscale
+  category: principle
+  title: Design in grayscale first
+  rule: Solve hierarchy with spacing, contrast and size before adding color. Then use color to communicate, not to decorate.
+  do: Get the hierarchy right in gray first, then add color only where it means something.
+  dont: Don’t reach for color to fix weak hierarchy. Everything shouts and nothing leads.
+  status: adopted
+
+- id: space-not-lines
+  category: principle
+  title: Separate with space and background, not lines
+  rule: Group and separate content with whitespace and background shifts. Borders are reserved for form controls, and dividing lines between items aren't used at all.
+  do: Separate items with space and let each sit on its own white surface.
+  dont: Don’t draw a line between every item and a border around the whole list.
+  status: adopted
+
+- id: prose-not-separators
+  category: principle
+  title: Join information with words, not separator characters
+  rule: When several pieces of information sit on one line, connect them in plain language. Never separate them with middle dots, pipes or slashes.
+  do: Join the details into a short sentence.
+  dont: Don’t string details together with dots, pipes or slashes.
+  status: adopted
+
+- id: tailwind-palette
+  category: color
+  title: Only use Tailwind palette colors
+  rule: Every color is a Tailwind palette shade, reached through a semantic alias (brand, accent, neutral, success, warning, danger, info). No one-off hex values.
+  do: Pick every color from a step of the palette, so shades line up.
+  dont: Don’t invent one-off colors that almost match the palette.
+  status: adopted
+
+- id: zinc-neutrals
+  category: color
+  title: Neutrals are zinc
+  rule: The neutral scale is zinc, an almost pure gray. It stays out of the way, so the brand color is the only hue on most screens.
+  do: Use plain gray, so the brand color is the only hue on the screen.
+  dont: Don’t use a tinted gray that fights with the brand color.
+  status: adopted
+
+- id: brand-sparingly
+  category: color
+  title: Spend the brand color sparingly
+  rule: Brand color is reserved for the primary action, focus states, the logo and at most one key highlight per view, like a stat or slide number. Eyebrows, links, navigation, hover states and decoration stay neutral.
+  do: Let the one main action carry the brand color and keep everything else neutral.
+  dont: Don’t color the eyebrow, title, link and button all at once. The button stops standing out.
+  status: adopted
+
+- id: no-gray-on-color
+  category: color
+  title: Don't put gray text on colored backgrounds
+  rule: On a colored surface, de-emphasize text with a lighter or darker shade of the same hue, or white at reduced opacity, never with gray.
+  do: On a colored surface, use a light tint of the same color for secondary text.
+  dont: Don’t put gray text on a colored background. It looks dull and is hard to read.
+  status: adopted
+
+- id: contrast-minimum
+  category: color
+  title: Meet WCAG AA contrast
+  rule: Body text needs at least 4.5:1 contrast and large text at least 3:1. In practice, text on white starts at neutral-500 for captions and neutral-700 for body.
+  do: Use text that is dark enough to read easily on its background.
+  dont: Don’t use light text on a light background.
+  status: adopted
+
+- id: one-typeface
+  category: type
+  title: One typeface, many weights
+  rule: Inter Variable does display, UI and body. Hierarchy comes from weight and tracking, not from mixing families. Use black (900) for headings, semibold (600) for buttons and UI emphasis, medium (500) for labels and navigation, and regular (400) for body. Mono is only for code.
+  do: Use one typeface and build hierarchy with weight.
+  dont: Don’t mix several typefaces to make things look different.
+  status: adopted
+
+- id: headings-black
+  category: type
+  title: Every heading is black
+  rule: All h1 to h6 elements use font-black, whatever their size. Never use bold, semibold or a lighter weight on a heading.
+  do: Make every heading black, even small ones.
+  dont: Don’t use a lighter weight for headings. They blend in with the body text.
+  status: adopted
+
+- id: self-hosted-fonts
+  category: type
+  title: Self-host every font
+  rule: Fonts come from Fontsource packages and ship with the site, deck or app. Never load them from Google Fonts or another font CDN.
+  do: Install the font as a package so it ships with the project.
+  dont: Don’t load fonts from Google Fonts or another font service.
+  status: adopted
+
+- id: type-roles
+  category: type
+  title: Use the type roles, not raw sizes
+  rule: Pick from display, h1, h2, h3, lead, body, small, caption and eyebrow. Each role fixes the size, line height, weight and color together.
+  do: Give every heading of the same kind the same style.
+  dont: Don’t pick a slightly different size and weight for each heading.
+  status: adopted
+
+- id: tight-headlines
+  category: type
+  title: Tighten large type
+  rule: Headlines at text-2xl and above get tracking-tight and a tighter line height. Body text keeps the default tracking and line-height 7 (1.75rem).
+  do: Pull large headlines together with tighter letter spacing and line height.
+  dont: Don’t leave large headlines with loose spacing. The words drift apart.
+  status: adopted
+
+- id: measure
+  category: type
+  title: Keep line length readable
+  rule: Running text is capped at max-w-prose (65ch). Use text-balance on headlines and text-pretty on paragraphs.
+  do: Keep paragraphs narrow enough that the eye finds the next line easily.
+  dont: Don’t let lines run across the whole width of the page.
+  status: adopted
+
+- id: constrained-spacing
+  category: spacing
+  title: Use a constrained spacing scale
+  rule: Space with the Tailwind steps 1, 2, 3, 4, 6, 8, 12, 16, 24 and 32 only. Adjacent steps differ by at least about 25%, so choices stay obvious.
+  do: Space things with a few clearly different steps, so everything lines up.
+  dont: Don’t nudge spacing by a pixel or two. Nothing lines up and the gaps look accidental.
+  status: adopted
+
+- id: group-by-proximity
+  category: spacing
+  title: More space between groups than within them
+  rule: The space around a group must be clearly larger than the space inside it, so the grouping reads without lines.
+  do: Put clearly more space between groups than inside them.
+  dont: Don’t space everything evenly. You can’t tell which label belongs to which value.
+  status: adopted
+
+- id: gap-on-parent
+  category: spacing
+  title: Space siblings from the parent
+  rule: Put flex-col or grid and a gap on the parent instead of giving each child the same margin.
+  do: Let the parent space its children evenly.
+  dont: Don’t give each child its own margin.
+  status: proposed
+
+- id: elevation-by-background
+  category: depth
+  title: Elevation comes from background, not shadow
+  rule: The page is neutral-50, surfaces on it are white, and wells inside surfaces are neutral-100. Only elements that float over other content, like menus, popovers and dialogs, get a shadow.
+  do: Set a white card on the light gray page. The contrast is enough to lift it.
+  dont: Don’t add a shadow and outline to cards that sit in the page.
+  status: adopted
+
+- id: radius-by-size
+  category: depth
+  title: Radius scales with element size
+  rule: Buttons and inputs use rounded-lg, badges use rounded-md, cards use rounded-xl and large panels use rounded-2xl. Avatars and toggles use rounded-full. Nested radii shrink by the padding between them.
+  do: Round larger elements more than the small ones inside them.
+  dont: Don’t mix square cards with pill-shaped buttons inside them.
+  status: adopted
+
+- id: motion-optional
+  category: motion
+  title: Motion is optional
+  rule: Every animation is an enhancement. The content must be complete and usable with motion off, both when prefers-reduced-motion is set and when the visitor turns it off.
+  do: Show the content right away. Motion only adds polish on top.
+  dont: Don’t hide content until an animation plays. With motion off, it never appears.
+  status: adopted
+
+- id: motion-durations
+  category: motion
+  title: Short and quick to settle
+  rule: Hover and press take 150ms, small UI changes 200ms, entering panels 300ms, and page reveals 500ms. Nothing in the UI runs longer than 500ms.
+  do: Finish small changes quickly, so the interface feels responsive.
+  dont: Don’t make people wait for slow animations.
+  status: adopted
+
+- id: motion-easing
+  category: motion
+  title: Ease out to enter, ease in to leave
+  rule: Entering elements use ease-out (a fast start that settles gently). Leaving elements use ease-in. State changes in place use ease-in-out. Overshoot is reserved for small confirmations.
+  do: Let things that appear start fast and settle gently.
+  dont: Don’t start an entrance slowly and stop it abruptly. It feels sluggish.
+  status: adopted
+
+- id: motion-small-distances
+  category: motion
+  title: Move things only a little
+  rule: Reveal offsets are 4–16px and scale changes stay between 0.96 and 1. Animate opacity and transform only.
+  do: Move things only a few pixels as they appear.
+  dont: Don’t fly elements in from far away or grow them from tiny.
+  status: adopted
+
+- id: one-primary-action
+  category: component
+  title: One primary action per view
+  rule: Each view or dialog has at most one solid brand button. Secondary actions are solid neutral-900 buttons, and tertiary actions are ghost buttons that only show a background on hover.
+  do: Give the main action the brand color and keep the others quieter.
+  dont: Don’t make every action a brand button. Nothing stands out.
+  status: adopted
+
+- id: focus-visible
+  category: component
+  title: Always show keyboard focus
+  rule: Every interactive element shows focus-visible:outline-2 outline-offset-2 in brand-600. Never remove an outline without replacing it, except on inputs, which use the focus halo instead.
+  do: Show a clear outline around whatever has keyboard focus.
+  dont: Don’t remove the focus outline. Keyboard users lose their place.
+  status: adopted
+
+- id: input-focus-halo
+  category: component
+  title: Inputs glow softly on focus
+  rule: Inputs have a 1px neutral-300 border that darkens to neutral-400 on hover. On focus, the border turns brand-500 and a 4px brand-500/10 halo appears around it.
+  do: Show a focused input with a colored border and a soft glow.
+  dont: Don’t leave the browser’s default focus ring on inputs.
+  status: adopted
+
+- id: heroicons-only
+  category: component
+  title: Icons come from Heroicons
+  rule: Use Heroicons and nothing else. Pick 16 solid for dense UI, 20 solid for most UI, and 24 outline for large or decorative use. Don't draw custom icons.
+  do: Use icons from one set, so they share size, weight and style.
+  dont: Don’t mix icon sets or emoji.
+  status: adopted
+
+- id: size-for-squares
+  category: component
+  title: Use size-* for square elements
+  rule: When an element is as wide as it is tall, set both with one size-* utility instead of a matching h-* and w-* pair.
+  do: Set width and height together with one size class.
+  dont: Don’t set the same width and height separately.
+  status: adopted
+
+- id: light-and-dark
+  category: component
+  title: Every component works in light and dark
+  rule: Style the light version first, then add dark variants with Tailwind's dark prefix. The dark variant follows the OS unless the page sets data-theme on the html element.
+  do: Make each component adapt to dark mode.
+  dont: Don’t leave a bright white surface in dark mode.
+  status: adopted
+
+- id: email-tables
+  category: channel
+  title: Emails are inlined, table-based and 600px wide
+  rule: Newsletters use a single 600px column, hex colors from tokens.json, the email font stack and inline styles. Use rounded corners and shadows sparingly, because Outlook drops them.
+  do: Keep newsletters to one simple column that every email client shows the same way.
+  dont: Don’t use side-by-side columns, shadows and gradients that email clients break.
+  status: adopted
+
+- id: social-safe-area
+  category: channel
+  title: Social images keep a 64px safe area
+  rule: Post images use 1080×1080, 1080×1350 or 1200×630 with at least 64px of padding, a headline of 64px or larger, and at most one brand-colored element.
+  do: Keep text well inside the edges of the image.
+  dont: Don’t run text up to the edge, where apps crop it.
+  status: trial
+
+- id: slides-one-idea
+  category: channel
+  title: One idea per slide
+  rule: Each slide makes one point. Prefer the statement, fact and quote layouts over bullet lists.
+  do: Make one point per slide, big enough to read from the back of the room.
+  dont: Don’t fill a slide with a list of bullet points.
+  status: adopted

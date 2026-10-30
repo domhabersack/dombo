@@ -1,0 +1,27 @@
+{
+  "name": "dombo",
+  "private": true,
+  "description": "Dom Habersack's personal design system: tokens, components, style guides and Slidev theme.",
+  "type": "module",
+  "workspaces": [
+    "packages/tokens",
+    "packages/slidev-theme",
+    "apps/site",
+    "apps/demo-deck"
+  ],
+  "scripts": {
+    "dev": "npm run build -w packages/tokens && npm run dev -w apps/site",
+    "dev:deck": "npm run build -w packages/tokens && npm run dev -w apps/demo-deck",
+    "build": "npm run build --workspaces --if-present",
+    "build:pages": "npm run build && node scripts/merge-deck.js",
+    "new:swipe": "node scripts/new-swipe.js",
+    "changeset": "changeset",
+    "release": "npm run build -w packages/tokens && changeset publish"
+  },
+  "devDependencies": {
+    "@changesets/cli": "^3.0.3"
+  },
+  "engines": {
+    "node": ">=22.12.0"
+  }
+}
