@@ -9,6 +9,8 @@ concurrency: release-${{ github.ref }}
 permissions:
   contents: write
   pull-requests: write
+  # npm trusted publishing: npm exchanges this OIDC token for a short-lived
+  # publish token, so no NPM_TOKEN secret is needed. Provenance is automatic.
   id-token: write
 
 jobs:
@@ -20,14 +22,13 @@ jobs:
         with:
           node-version: 22
           cache: npm
-          registry-url: https://registry.npmjs.org
+      # Trusted publishing needs npm 11.5.1 or newer; Node 22 ships with npm 10.
+      - run: npm install -g npm@^11.5.1
       - run: npm ci
       # Opens a "Version packages" PR while changesets are pending; publishes once it's merged.
+      # Without NPM_TOKEN set, the action leaves npm auth to trusted publishing.
       - uses: changesets/action@v1
         with:
           publish: npm run release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-          NPM_CONFIG_PROVENANCE: true

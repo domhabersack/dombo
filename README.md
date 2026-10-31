@@ -72,4 +72,4 @@ theme: '@domhabersack/slidev-theme-dombo'
 ## Publishing
 
 - **Site:** pushing to `main` runs `.github/workflows/pages.yml`. In the repo settings, enable Pages with the source set to "GitHub Actions".
-- **Packages:** `.github/workflows/release.yml` uses Changesets. It opens a "Version packages" PR, and merging that PR publishes to npm. It needs an `NPM_TOKEN` repository secret, and the `@domhabersack` scope must exist on npm.
+- **Packages:** `.github/workflows/release.yml` uses Changesets. It opens a "Version packages" PR, and merging that PR publishes to npm. It publishes with npm trusted publishing, so there is no npm token to store or rotate. Each package needs a trusted publisher on npmjs.com (package settings → Trusted publisher → GitHub Actions) with user `domhabersack`, repository `dombo` and workflow `release.yml`. Every published version gets a provenance statement automatically.

@@ -3,7 +3,6 @@ theme: '@domhabersack/slidev-theme-dombo'
 title: Dombo slide templates
 info: Every master layout and component in @domhabersack/slidev-theme-dombo.
 layout: cover
-eyebrow: Slidev theme
 author: Dom Habersack
 date: October 2026
 transition: rise

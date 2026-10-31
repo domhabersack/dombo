@@ -1,7 +1,6 @@
 ---
 theme: ./
 layout: cover
-eyebrow: Theme preview
 author: Dom Habersack
 ---
 

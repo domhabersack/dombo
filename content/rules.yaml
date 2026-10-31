@@ -1,6 +1,6 @@
 # Every rule of the design system, one entry each.
 #
-# category: principle | color | type | spacing | depth | motion | component | channel
+# category: principle | color | type | spacing | depth | motion | component | channel | slop
 # status:   adopted (use it) | trial (trying it out) | proposed (considering it)
 #
 # Swipe entries link here through `adopted[].ruleId`; the site shows those
@@ -65,9 +65,9 @@
 - id: brand-sparingly
   category: color
   title: Spend the brand color sparingly
-  rule: Brand color is reserved for the primary action, focus states, the logo and at most one key highlight per view, like a stat or slide number. Eyebrows, links, navigation, hover states and decoration stay neutral.
+  rule: Brand color is reserved for the primary action, focus states, the logo and at most one key highlight per view, like a stat or slide number. Badges, links, navigation, hover states and decoration stay neutral.
   do: Let the one main action carry the brand color and keep everything else neutral.
-  dont: Don’t color the eyebrow, title, link and button all at once. The button stops standing out.
+  dont: Don’t color the title, badge, link and button all at once. The button stops standing out.
   status: adopted
 
 - id: no-gray-on-color
@@ -113,7 +113,7 @@
 - id: type-roles
   category: type
   title: Use the type roles, not raw sizes
-  rule: Pick from display, h1, h2, h3, lead, body, small, caption and eyebrow. Each role fixes the size, line height, weight and color together.
+  rule: Pick from display, h1, h2, h3, lead, body, small and caption. Each role fixes the size, line height, weight and color together.
   do: Give every heading of the same kind the same style.
   dont: Don’t pick a slightly different size and weight for each heading.
   status: adopted
@@ -276,4 +276,103 @@
   rule: Each slide makes one point. Prefer the statement, fact and quote layouts over bullet lists.
   do: Make one point per slide, big enough to read from the back of the room.
   dont: Don’t fill a slide with a list of bullet points.
+  status: adopted
+
+# Anti slop: patterns that are fine on their own but so overused in
+# AI-generated interfaces that they now make a design look generated.
+
+- id: no-eyebrows
+  category: slop
+  title: No labels above headings
+  rule: Don't introduce a heading with a small label above it. A good heading says what follows on its own, and a label above every section turns into noise.
+  do: Let the heading speak for itself.
+  dont: Don’t stack a small colored label above every heading.
+  status: adopted
+
+- id: no-gradient-text
+  category: slop
+  title: No gradient text
+  rule: Headlines are one solid color. Violet-to-pink gradient text is the most recognizable sign of a generated page, and it lowers contrast.
+  do: Set headlines in one solid, high-contrast color.
+  dont: Don’t fill headlines with a color gradient.
+  status: adopted
+
+- id: no-emoji-decoration
+  category: slop
+  title: No emoji as decoration
+  rule: Emoji don't stand in for icons, bullets or section markers. Rockets and sparkles in front of headings and list items read as filler.
+  do: Use plain text, or a Heroicon where an icon helps scanning.
+  dont: Don’t start headings and list items with emoji.
+  status: adopted
+
+- id: no-glow-blobs
+  category: slop
+  title: No glowing blobs
+  rule: Don't place blurred, colored circles behind content. They add mood without information and muddy the background.
+  do: Put content on a calm, plain background.
+  dont: Don’t float blurred color glows behind the content.
+  status: adopted
+
+- id: no-glass-cards
+  category: slop
+  title: No frosted glass cards
+  rule: Translucent, blurred cards over colorful backgrounds look striking in a screenshot but hurt contrast and legibility. Keep blur for sticky bars that scroll over content.
+  do: Give cards a solid surface.
+  dont: Don’t make cards translucent and blurry over a busy gradient.
+  status: adopted
+
+- id: no-side-stripes
+  category: slop
+  title: No colored side stripes
+  rule: Don't mark cards or callouts with a thick colored border down one side. Use a tinted background and an icon instead.
+  do: Tint the background and add an icon.
+  dont: Don’t add a thick colored stripe down one side of a card.
+  status: adopted
+
+- id: no-icon-tiles
+  category: slop
+  title: No icon tile on every card
+  rule: A grid of cards that each open with an icon in a colored rounded square is the default generated feature section. Lead with the content, and use icons only where they help.
+  do: Lead with a clear title and one concrete sentence.
+  dont: Don’t open every card with an icon in a colored square.
+  status: adopted
+
+- id: no-announcement-pill
+  category: slop
+  title: No announcement pill above the hero
+  rule: A pill above the headline with a sparkle and an arrow has become boilerplate. If there is real news, put it in the headline or a proper banner.
+  do: Open with the headline.
+  dont: Don’t put a sparkly “New” pill above the headline.
+  status: adopted
+
+- id: no-glowing-buttons
+  category: slop
+  title: No glowing gradient buttons
+  rule: Buttons are solid. Gradients and colored glow shadows make a button shout, and nothing else on the page can compete with it.
+  do: Use one solid brand color for the primary button.
+  dont: Don’t give buttons gradients and colored glow shadows.
+  status: adopted
+
+- id: no-hype-words
+  category: slop
+  title: No hype words
+  rule: Say what the product does. Unlock, supercharge, seamless, elevate, effortless and next-level are so common in generated copy that readers skip right past them.
+  do: Say plainly what it does and for whom.
+  dont: Don’t promise to supercharge, unlock or elevate anything.
+  status: adopted
+
+- id: no-not-x-but-y
+  category: slop
+  title: No staged reveals in copy
+  rule: Avoid “It's not just X, it's Y” sentences, dramatic dash reveals and rhetorical questions. A page with a few of them reads as generated.
+  do: Make the point in one direct sentence.
+  dont: Don’t build sentences around “It’s not X. It’s Y.”
+  status: adopted
+
+- id: no-vanity-stats
+  category: slop
+  title: No made-up stats
+  rule: A row of round numbers like 10x, 99.9% and 24/7 with no source looks filled in. Show a real number with what it measures, or show none.
+  do: Show a real number and say what it measures.
+  dont: Don’t fill a row with round numbers nobody measured.
   status: adopted

@@ -17,7 +17,7 @@ transition: rise        # optional: rise | soft-slide | any Slidev transition
 
 | Layout | Frontmatter |
 | --- | --- |
-| `cover` | `eyebrow`, `author` (defaults to the deck's author), `date` |
+| `cover` | `author` (defaults to the deck's author), `date` |
 | `section` | `number` |
 | `default` | none |
 | `two-cols` | `split` (e.g. `2fr 3fr`), with the `::right::` slot |

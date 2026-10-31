@@ -45,7 +45,6 @@ export const recipes: Recipe[] = [
     name: 'Card',
     description: 'A white surface on the neutral-50 page, with no border and no shadow. When the whole card is a link, hovering softens the title and nudges the arrow.',
     html: `<a href="#card" class="group flex max-w-sm flex-col gap-2 rounded-xl bg-white p-6 dark:bg-neutral-900 ${focus}">
-  <p class="text-sm/6 font-semibold text-neutral-600 dark:text-neutral-400">Case study</p>
   <h3 class="text-lg/7 font-black text-neutral-900 transition duration-150 group-hover:text-neutral-600 dark:text-white dark:group-hover:text-neutral-300">Cutting onboarding time in half</h3>
   <p class="text-sm/6 text-neutral-600 dark:text-neutral-400">How a calmer first-run experience doubled activation without adding a single feature.</p>
   <p class="mt-2 inline-flex items-center gap-1 text-sm/6 font-semibold text-neutral-900 dark:text-white">Read the case study ${arrow}</p>

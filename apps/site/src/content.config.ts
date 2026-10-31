@@ -3,7 +3,7 @@ import { file, glob } from 'astro/loaders'
 import { z } from 'astro/zod'
 import { parse } from 'yaml'
 
-const categories = ['principle', 'color', 'type', 'spacing', 'depth', 'motion', 'component', 'channel'] as const
+const categories = ['principle', 'color', 'type', 'spacing', 'depth', 'motion', 'component', 'channel', 'slop'] as const
 
 const rules = defineCollection({
   // Keep the order rules are written in; the file loader would sort them by id.

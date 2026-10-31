@@ -38,7 +38,6 @@ export const typeRoles = {
   body: 'text-base/7 text-neutral-700 dark:text-neutral-300',
   small: 'text-sm/6 text-neutral-600 dark:text-neutral-400',
   caption: 'text-xs/5 font-medium text-neutral-500 dark:text-neutral-400',
-  eyebrow: 'text-sm/6 font-semibold text-neutral-600 dark:text-neutral-400',
 } as const
 
 /** Constrained spacing scale (Tailwind steps) we actually reach for. */

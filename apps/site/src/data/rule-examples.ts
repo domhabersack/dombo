@@ -72,14 +72,12 @@ export const ruleExamples: Record<string, RuleExample> = {
 
   'brand-sparingly': {
     do: `<div class="${card} flex w-full flex-col items-start gap-1">
-  <p class="text-xs font-semibold text-neutral-600 dark:text-neutral-400">Billing</p>
-  <p class="text-sm font-black text-neutral-900 dark:text-white">Upgrade your plan</p>
+  <p class="flex items-center gap-2 text-sm font-black text-neutral-900 dark:text-white">Upgrade your plan <span class="rounded-md bg-neutral-100 px-1.5 py-0.5 text-[11px] font-medium text-neutral-700 dark:bg-white/10 dark:text-neutral-300">Pro</span></p>
   <p class="text-xs text-neutral-600 dark:text-neutral-400">Read the <span class="text-neutral-900 underline decoration-neutral-300 dark:text-white dark:decoration-neutral-600">pricing details</span>.</p>
   <span class="${brandButton} mt-2">Upgrade</span>
 </div>`,
     dont: `<div class="${card} flex w-full flex-col items-start gap-1">
-  <p class="text-xs font-semibold text-brand-600 dark:text-brand-400">Billing</p>
-  <p class="text-sm font-black text-brand-700 dark:text-brand-300">Upgrade your plan</p>
+  <p class="flex items-center gap-2 text-sm font-black text-brand-700 dark:text-brand-300">Upgrade your plan <span class="rounded-md bg-brand-100 px-1.5 py-0.5 text-[11px] font-medium text-brand-700 dark:bg-brand-500/15 dark:text-brand-300">Pro</span></p>
   <p class="text-xs text-neutral-600 dark:text-neutral-400">Read the <span class="text-brand-600 underline dark:text-brand-400">pricing details</span>.</p>
   <span class="${brandButton} mt-2">Upgrade</span>
 </div>`,
@@ -369,6 +367,130 @@ import '@fontsource-variable/inter'</pre>`,
     <div class="flex flex-col gap-1 rounded-lg bg-white p-1.5 shadow-md">${lines(['80%', '100%'])}</div>
     <div class="flex flex-col gap-1 rounded-lg bg-white p-1.5 shadow-md">${lines(['100%', '70%'])}</div>
   </div>
+</div>`,
+  },
+
+  'no-eyebrows': {
+    do: `<div class="w-full">
+  <p class="text-base font-black text-neutral-900 dark:text-white">Pricing</p>
+  <p class="text-xs/5 text-neutral-600 dark:text-neutral-400">Pay per seat and cancel anytime.</p>
+</div>`,
+    dont: `<div class="w-full">
+  <p class="text-[10px] font-semibold tracking-widest text-violet-600 uppercase dark:text-violet-400">Pricing</p>
+  <p class="text-base font-black text-neutral-900 dark:text-white">Simple pricing</p>
+  <p class="text-xs/5 text-neutral-600 dark:text-neutral-400">Pay per seat and cancel anytime.</p>
+</div>`,
+  },
+
+  'no-gradient-text': {
+    do: `<p class="text-xl/6 font-black tracking-tight text-neutral-900 dark:text-white">Share code as images</p>`,
+    dont: `<p class="bg-gradient-to-r from-violet-600 to-pink-500 bg-clip-text text-xl/6 font-black tracking-tight text-transparent">Share code as images</p>`,
+  },
+
+  'no-emoji-decoration': {
+    do: `<ul class="flex flex-col gap-1.5 text-xs font-medium text-neutral-700 dark:text-neutral-300">
+  <li class="flex items-center gap-1.5">${icon(icons.checkCircle, 'size-4 text-neutral-400')}Unlimited projects</li>
+  <li class="flex items-center gap-1.5">${icon(icons.checkCircle, 'size-4 text-neutral-400')}Custom domains</li>
+  <li class="flex items-center gap-1.5">${icon(icons.checkCircle, 'size-4 text-neutral-400')}Team roles</li>
+</ul>`,
+    dont: `<ul class="flex flex-col gap-1.5 text-xs font-medium text-neutral-700 dark:text-neutral-300">
+  <li>🚀 Unlimited projects</li>
+  <li>✨ Custom domains</li>
+  <li>🔥 Team roles</li>
+</ul>`,
+  },
+
+  'no-glow-blobs': {
+    do: `<div class="${card} w-full p-4">
+  <p class="text-sm font-black text-neutral-900 dark:text-white">Weekly report</p>
+  <p class="text-xs text-neutral-600 dark:text-neutral-400">Signups grew 12%.</p>
+</div>`,
+    dont: `<div class="relative w-full">
+  <span class="absolute -top-6 -left-4 size-20 rounded-full bg-violet-500/50 blur-2xl"></span>
+  <span class="absolute -right-4 -bottom-6 size-20 rounded-full bg-pink-400/50 blur-2xl"></span>
+  <div class="relative rounded-lg bg-white/70 p-4 dark:bg-neutral-900/70">
+    <p class="text-sm font-black text-neutral-900 dark:text-white">Weekly report</p>
+    <p class="text-xs text-neutral-600 dark:text-neutral-400">Signups grew 12%.</p>
+  </div>
+</div>`,
+  },
+
+  'no-glass-cards': {
+    do: `<div class="${card} w-full p-4">
+  <p class="text-sm font-black text-neutral-900 dark:text-white">Team plan</p>
+  <p class="text-xs text-neutral-600 dark:text-neutral-400">5 seats, billed yearly</p>
+</div>`,
+    dont: `<div class="w-full rounded-lg bg-gradient-to-br from-violet-500 via-pink-500 to-orange-400 p-3">
+  <div class="rounded-lg bg-white/20 p-3 ring-1 ring-white/30 backdrop-blur">
+    <p class="text-sm font-black text-white">Team plan</p>
+    <p class="text-xs text-white/70">5 seats, billed yearly</p>
+  </div>
+</div>`,
+  },
+
+  'no-side-stripes': {
+    do: `<div class="flex w-full gap-2 rounded-lg bg-info-50 p-3 dark:bg-info-500/10">
+  ${icon(icons.informationCircle, 'size-4 shrink-0 text-info-500')}
+  <p class="text-xs/4 font-medium text-info-800 dark:text-info-300">Exports now include fonts.</p>
+</div>`,
+    dont: `<div class="w-full rounded-lg border-l-4 border-violet-500 bg-white p-3 dark:bg-neutral-900">
+  <p class="text-xs/4 font-medium text-neutral-800 dark:text-neutral-200">Exports now include fonts.</p>
+</div>`,
+  },
+
+  'no-icon-tiles': {
+    do: `<div class="grid w-full grid-cols-2 gap-2">
+  <div class="${card}"><p class="text-xs font-black text-neutral-900 dark:text-white">Alerts</p><p class="text-[11px]/4 text-neutral-600 dark:text-neutral-400">Email when a build fails.</p></div>
+  <div class="${card}"><p class="text-xs font-black text-neutral-900 dark:text-white">Favorites</p><p class="text-[11px]/4 text-neutral-600 dark:text-neutral-400">Pin projects you use daily.</p></div>
+</div>`,
+    dont: `<div class="grid w-full grid-cols-2 gap-2">
+  <div class="${card}"><span class="mb-1.5 flex size-6 items-center justify-center rounded-md bg-violet-100 text-violet-600 dark:bg-violet-500/20 dark:text-violet-300">${icon(icons.bell, 'size-3.5')}</span><p class="text-xs font-black text-neutral-900 dark:text-white">Alerts</p><p class="text-[11px]/4 text-neutral-600 dark:text-neutral-400">Stay in the loop.</p></div>
+  <div class="${card}"><span class="mb-1.5 flex size-6 items-center justify-center rounded-md bg-violet-100 text-violet-600 dark:bg-violet-500/20 dark:text-violet-300">${icon(icons.star, 'size-3.5')}</span><p class="text-xs font-black text-neutral-900 dark:text-white">Favorites</p><p class="text-[11px]/4 text-neutral-600 dark:text-neutral-400">Never miss a beat.</p></div>
+</div>`,
+  },
+
+  'no-announcement-pill': {
+    do: `<div class="w-full">
+  <p class="text-lg/6 font-black tracking-tight text-neutral-900 dark:text-white">Share code as images</p>
+  <p class="mt-1 text-xs text-neutral-600 dark:text-neutral-400">Paste a snippet, pick a theme, post it.</p>
+</div>`,
+    dont: `<div class="w-full">
+  <span class="mb-2 inline-flex items-center gap-1 rounded-full bg-white px-2 py-0.5 text-[10px] font-medium text-neutral-700 ring-1 ring-neutral-200 dark:bg-white/10 dark:text-neutral-300 dark:ring-white/15">✨ New: AI exports →</span>
+  <p class="text-lg/6 font-black tracking-tight text-neutral-900 dark:text-white">Share code as images</p>
+  <p class="mt-1 text-xs text-neutral-600 dark:text-neutral-400">Paste a snippet, pick a theme, post it.</p>
+</div>`,
+  },
+
+  'no-glowing-buttons': {
+    do: `<span class="${brandButton} px-3 py-1.5">Start free trial</span>`,
+    dont: `<span class="rounded-full bg-gradient-to-r from-violet-600 to-pink-500 px-3 py-1.5 text-xs font-semibold text-white shadow-lg shadow-pink-500/50">Start free trial</span>`,
+  },
+
+  'no-hype-words': {
+    do: `<div class="w-full">
+  <p class="text-sm font-black text-neutral-900 dark:text-white">Screenshots for your code</p>
+  <p class="text-xs/5 text-neutral-600 dark:text-neutral-400">Paste a snippet and get an image sized for social posts.</p>
+</div>`,
+    dont: `<div class="w-full">
+  <p class="text-sm font-black text-neutral-900 dark:text-white">Supercharge your workflow</p>
+  <p class="text-xs/5 text-neutral-600 dark:text-neutral-400">Unlock seamless, effortless sharing that elevates your code.</p>
+</div>`,
+  },
+
+  'no-not-x-but-y': {
+    do: `<p class="text-sm/5 font-medium text-neutral-800 dark:text-neutral-200">Codeshots turns a snippet into an image you can post.</p>`,
+    dont: `<p class="text-sm/5 font-medium text-neutral-800 dark:text-neutral-200">It’s not just a screenshot tool. It’s a whole new way to share code.</p>`,
+  },
+
+  'no-vanity-stats': {
+    do: `<div class="${card} w-full">
+  <p class="text-xl font-black text-neutral-900 tabular-nums dark:text-white">1,284</p>
+  <p class="text-[11px]/4 text-neutral-600 dark:text-neutral-400">screenshots shared last week</p>
+</div>`,
+    dont: `<div class="grid w-full grid-cols-3 gap-1.5 text-center">
+  <div class="${card} px-1"><p class="text-base font-black text-neutral-900 dark:text-white">10x</p><p class="text-[10px] text-neutral-600 dark:text-neutral-400">faster</p></div>
+  <div class="${card} px-1"><p class="text-base font-black text-neutral-900 dark:text-white">99.9%</p><p class="text-[10px] text-neutral-600 dark:text-neutral-400">uptime</p></div>
+  <div class="${card} px-1"><p class="text-base font-black text-neutral-900 dark:text-white">24/7</p><p class="text-[10px] text-neutral-600 dark:text-neutral-400">support</p></div>
 </div>`,
   },
 }

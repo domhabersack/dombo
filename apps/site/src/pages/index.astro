@@ -45,6 +45,7 @@ const sections = [
   ['depth', 'Radius & depth'],
   ['motion', 'Motion'],
   ['components', 'Components'],
+  ['anti-slop', 'Anti Slop'],
   ['channels', 'Channels'],
   ['swipe-file', 'Swipe file'],
   ['changelog', 'Changelog'],
@@ -70,7 +71,6 @@ const typeSamples: Record<string, string> = {
   body: 'Hierarchy comes from weight and color first. Size is the last tool you reach for, not the first. Most text on a screen should be quiet.',
   small: 'Last updated 3 minutes ago by Dom',
   caption: 'Figure 2: Elevation levels',
-  eyebrow: 'Design system',
 }
 
 const durations = Object.entries(tokens.motion.duration)
@@ -107,8 +107,7 @@ const brandHex = tokens.colors.brand['600'].hex
 const neutral = (shade: number) => tokens.colors.neutral[String(shade)].hex
 const emailSnippet = `<table role="presentation" width="600" cellpadding="0" cellspacing="0" style="margin:0 auto;background:#ffffff;border-radius:12px;font-family:${tokens.fonts.email.join(',').replace(/"/g, "'")};">
   <tr><td style="padding:40px;">
-    <p style="margin:0;font-size:14px;line-height:24px;font-weight:600;color:${neutral(600)};">Newsletter issue 12</p>
-    <h1 style="margin:8px 0 0;font-size:28px;line-height:36px;font-weight:900;color:${neutral(900)};">Collect, distill, adopt</h1>
+    <h1 style="margin:0;font-size:28px;line-height:36px;font-weight:900;color:${neutral(900)};">Collect, distill, adopt</h1>
     <p style="margin:16px 0 0;font-size:16px;line-height:28px;color:${neutral(600)};">This week: how a swipe file turns into design tokens.</p>
     <a href="https://example.com" style="display:inline-block;margin-top:24px;padding:10px 16px;border-radius:6px;background:${brandHex};color:#ffffff;font-size:14px;font-weight:600;text-decoration:none;">Read the issue</a>
   </td></tr>
@@ -191,8 +190,7 @@ const install = `npm install @domhabersack/tokens
     <main id="main" class="min-w-0">
       <!-- Intro -->
       <div class="pt-16 sm:pt-24">
-        <p class="animate-fade-up text-sm/6 font-semibold text-neutral-600 dark:text-neutral-400">Personal design system</p>
-        <h1 class="mt-2 max-w-3xl animate-fade-up text-4xl/tight font-black tracking-tight text-balance text-neutral-900 [animation-delay:80ms] sm:text-5xl/tight dark:text-white">
+        <h1 class="max-w-3xl animate-fade-up text-4xl/tight font-black tracking-tight text-balance text-neutral-900 [animation-delay:80ms] sm:text-5xl/tight dark:text-white">
           Every rule for how Dom’s products look, move and read.
         </h1>
         <p class="mt-6 max-w-prose animate-fade-up text-lg/8 text-pretty text-neutral-600 [animation-delay:160ms] dark:text-neutral-400">
@@ -210,7 +208,7 @@ const install = `npm install @domhabersack/tokens
       </div>
 
       <!-- 1. Principles -->
-      <Section id="principles" eyebrow="Foundations" title="Principles">
+      <Section id="principles" title="Principles">
         <Fragment slot="intro">
           These are the rules every other rule follows, mostly adapted from <a class="font-medium text-neutral-900 underline decoration-neutral-300 underline-offset-2 hover:decoration-neutral-900 dark:text-white dark:decoration-neutral-600 dark:hover:decoration-white" href="https://www.refactoringui.com">Refactoring UI</a>. If a decision isn't covered further down, these decide it.
         </Fragment>
@@ -218,7 +216,7 @@ const install = `npm install @domhabersack/tokens
       </Section>
 
       <!-- 2. Color -->
-      <Section id="color" eyebrow="Foundations" title="Color">
+      <Section id="color" title="Color">
         <Fragment slot="intro">
           Every color is a stock Tailwind palette shade under a semantic name. Use <code class="text-sm font-medium text-neutral-900 dark:text-white">bg-brand-600</code>, not <code class="text-sm">bg-fuchsia-600</code>, so the brand can be re-pointed in one place. Click a swatch to copy its class.
         </Fragment>
@@ -257,7 +255,7 @@ const install = `npm install @domhabersack/tokens
       </Section>
 
       <!-- 3. Typography -->
-      <Section id="typography" eyebrow="Foundations" title="Typography">
+      <Section id="typography" title="Typography">
         <Fragment slot="intro">
           One family, <strong class="font-semibold text-neutral-900 dark:text-white">Inter Variable</strong>, with JetBrains Mono for code, both self-hosted. Headings are always black. Pick a role rather than a size, because each role sets size, line height, weight and color together.
         </Fragment>
@@ -292,7 +290,7 @@ const install = `npm install @domhabersack/tokens
       </Section>
 
       <!-- 4. Spacing -->
-      <Section id="spacing" eyebrow="Foundations" title="Spacing">
+      <Section id="spacing" title="Spacing">
         <Fragment slot="intro">
           These are the Tailwind spacing steps the system uses, and the rest are off-limits. Neighboring steps are far enough apart that picking one is never a coin toss.
         </Fragment>
@@ -311,7 +309,7 @@ const install = `npm install @domhabersack/tokens
       </Section>
 
       <!-- 5. Depth -->
-      <Section id="depth" eyebrow="Foundations" title="Radius & depth">
+      <Section id="depth" title="Radius & depth">
         <Fragment slot="intro">
           Depth comes from background lightness. The page is neutral-50, surfaces are white and wells are neutral-100. Only things that float above the page, like menus and dialogs, get a shadow.
         </Fragment>
@@ -348,7 +346,7 @@ const install = `npm install @domhabersack/tokens
       </Section>
 
       <!-- 6. Motion -->
-      <Section id="motion" eyebrow="Foundations" title="Motion">
+      <Section id="motion" title="Motion">
         <Fragment slot="intro">
           Motion should be lively, subtle and always optional. Use the switch in the header to turn it on or off for this page. On Auto it follows your OS reduced-motion setting. Every demo below still works as a static page.
         </Fragment>
@@ -433,7 +431,7 @@ const install = `npm install @domhabersack/tokens
       </Section>
 
       <!-- 7. Components -->
-      <Section id="components" eyebrow="Building blocks" title="Components">
+      <Section id="components" title="Components">
         <Fragment slot="intro">
           These recipes are written in the style of Tailwind UI: plain HTML with utility classes, so they paste into Astro, React, Vue or a template. Each preview is rendered from the same markup you copy.
         </Fragment>
@@ -441,8 +439,16 @@ const install = `npm install @domhabersack/tokens
         <RuleList rules={rulesIn('component')} {inspiredBy} />
       </Section>
 
+      <!-- Anti slop -->
+      <Section id="anti-slop" title="Anti Slop">
+        <Fragment slot="intro">
+          These patterns show up in so much AI-generated work that they now make an interface look generated. None of them is bad by itself. Overuse and misuse have worn them out, so they rarely fit a modern interface. Leave them out unless there is a specific reason, and then use them once.
+        </Fragment>
+        <RuleList rules={rulesIn('slop')} {inspiredBy} />
+      </Section>
+
       <!-- 8. Channels -->
-      <Section id="channels" eyebrow="Style guides" title="Channels">
+      <Section id="channels" title="Channels">
         <Fragment slot="intro">
           The same tokens work on every surface, and each channel has its own constraints. Here's how the system adapts to each one.
         </Fragment>
@@ -510,7 +516,7 @@ const install = `npm install @domhabersack/tokens
       </Section>
 
       <!-- 9. Swipe file -->
-      <Section id="swipe-file" eyebrow="Sources" title="Swipe file">
+      <Section id="swipe-file" title="Swipe file">
         <Fragment slot="intro">
           These are designs worth learning from, including Dom’s own projects. Each entry lists the properties that were adopted and links to the rules they became. To add one, run <code class="font-mono text-sm text-neutral-900 dark:text-white">npm run new:swipe my-find</code> and drop a screenshot into its folder.
         </Fragment>
@@ -557,7 +563,7 @@ const install = `npm install @domhabersack/tokens
       </Section>
 
       <!-- 10. Changelog -->
-      <Section id="changelog" eyebrow="History" title="Changelog">
+      <Section id="changelog" title="Changelog">
         <Fragment slot="intro">How the system has evolved.</Fragment>
         <ol class="grid gap-8">
           {

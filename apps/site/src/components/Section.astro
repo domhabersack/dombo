@@ -1,15 +1,13 @@
 ---
 interface Props {
   id: string
-  eyebrow: string
   title: string
 }
-const { id, eyebrow, title } = Astro.props
+const { id, title } = Astro.props
 ---
 
 <section id={id} class="flex scroll-mt-20 flex-col gap-10 py-16 sm:py-24">
   <header data-animate="fade-up" class="flex max-w-prose flex-col gap-2">
-    <p class="text-sm/6 font-semibold text-neutral-600 dark:text-neutral-400">{eyebrow}</p>
     <h2 class="text-3xl/tight font-black tracking-tight text-balance text-neutral-900 dark:text-white">{title}</h2>
     <div class="mt-2 text-base/7 text-pretty text-neutral-600 dark:text-neutral-400"><slot name="intro" /></div>
   </header>
