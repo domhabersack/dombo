@@ -166,6 +166,23 @@ const install = `npm install @domhabersack/tokens
         </div>
       </div>
     </div>
+    <nav aria-label="Sections" class="lg:hidden">
+      <ol data-nav-strip class="relative flex gap-1 overflow-x-auto [mask-image:linear-gradient(to_right,transparent,black_1rem,black_calc(100%-1rem),transparent)] overscroll-x-contain px-4 pb-2 text-sm/6 whitespace-nowrap [scrollbar-width:none] sm:px-6 [&::-webkit-scrollbar]:hidden">
+        {
+          sections.map(([id, label]) => (
+            <li class="shrink-0">
+              <a
+                href={`#${id}`}
+                data-nav-link
+                class="block rounded-md px-3 py-1 text-neutral-600 transition duration-150 hover:bg-neutral-100 hover:text-neutral-900 aria-current:bg-neutral-200/70 aria-current:font-medium aria-current:text-neutral-900 dark:text-neutral-400 dark:hover:bg-white/5 dark:hover:text-white dark:aria-current:bg-white/10 dark:aria-current:text-white"
+              >
+                {label}
+              </a>
+            </li>
+          ))
+        }
+      </ol>
+    </nav>
   </header>
 
   <div id="top" class="mx-auto max-w-7xl px-4 sm:px-6 lg:grid lg:grid-cols-[13rem_minmax(0,1fr)] lg:gap-12 lg:px-8">
